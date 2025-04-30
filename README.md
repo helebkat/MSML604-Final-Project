@@ -15,5 +15,5 @@
     - Should we verify that normal distribution is a good fit for the data?
     - Analyze the possibility of using Monte Carlo simulation
     - Analyze if other distributions can be used as they're a better fit, or if we can add skewness and kurtosis to the normal distribution
-    - Analyze the use of continuous calculation of normal distribution [1](https://www.mathworks.com/help/risk/estimate-var-using-parametric-methods.html)
-- Analyze with algorithms to use for integer optimization
+    - Analyze "Exponentially Weighted Moving Average (EWMA) VaR Calculation" [1](https://www.mathworks.com/help/risk/estimate-var-using-parametric-methods.html)
+- Analyze which algorithms to use for integer optimization
