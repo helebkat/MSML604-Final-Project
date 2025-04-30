@@ -18,3 +18,4 @@
     - Analyze "Exponentially Weighted Moving Average (EWMA) VaR Calculation" [1](https://www.mathworks.com/help/risk/estimate-var-using-parametric-methods.html)
 - Analyze which algorithms to use for integer optimization
     - Is CPLEX an option?
+    - Is this a "Mixed Integer Linear Programming" problem?
