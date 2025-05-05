@@ -4,18 +4,25 @@
 
 - [Proposal](proposal.md)
 
+## Source Code
+
+### 1. Retrieve Data
+
+[1-retrieve-data.py](source/1-retrieve-data.py)
+
+Generates the CSV file `stock_data.csv` with the daily stock data for the past year. It includes the opening, high, low, closing, and volume of the stock.
+
+### 2. Compute Returns
+
+[2-compute-returns.py](source/2-compute-returns.py)
+
+Reads the CSV file `stock_data.csv` and computes the daily percentage returns of the stock. Adds a new column `daily_return` to the DataFrame. Generates the CSV file `daily_returns.csv`.
+
+### 3. Fit MLE
+
+[3-fit-mle.py](source/3-fit-mle.py)
+
+Reads the CSV file `daily_returns.csv` and fits the MLE for the multivariate normal distribution.
+
 ## Next Steps
 
-- Review the optimization formula and constraints
-    - How is $\gamma$ defined?
-    - Add an expected return constraint (How do we calculate the expected return?)
-    - Give more reasons to why we would like to minimize the CVaR
-    - Consider multiple goals optimization formulas
-- Review the method to estimate the VaR
-    - Should we verify that normal distribution is a good fit for the data?
-    - Analyze the possibility of using Monte Carlo simulation
-    - Analyze if other distributions can be used as they're a better fit, or if we can add skewness and kurtosis to the normal distribution
-    - Analyze "Exponentially Weighted Moving Average (EWMA) VaR Calculation" [1](https://www.mathworks.com/help/risk/estimate-var-using-parametric-methods.html)
-- Analyze which algorithms to use for integer optimization
-    - Is CPLEX an option?
-    - Is this a "Mixed Integer Linear Programming" problem?
