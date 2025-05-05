@@ -16,7 +16,7 @@ def fit_skewt(returns, symbol):
         # Compute PDF and CDF for each data point
         pdf_vals = t.pdf(z, df=nu) 
         cdf_vals = t.cdf(alpha * z * np.sqrt((nu+1)/(nu + z**2)), df=nu+1)
-        # Small value clipping to avoid log(0)
+        # Clipping to avoid log(0)
         pdf_vals = np.clip(pdf_vals, 1e-12, None)
         cdf_vals = np.clip(cdf_vals, 1e-12, 1-1e-12)
         log_vals = np.log(2/omega) + np.log(pdf_vals) + np.log(cdf_vals)
@@ -31,8 +31,7 @@ def fit_skewt(returns, symbol):
     # Initial guess for [xi, omega, alpha, nu]
     init = [0.0, np.std(returns), 0.0, 10.0]  # e.g., zero mean, sample std, no skew, moderate nu
     result = minimize(neg_loglik_skewt, init, 
-                     method='BFGS',  # Explicitly specify L-BFGS-B method
-                    #  bounds=[(None,None),(1e-6,None),(None,None),(1e-6,None)],
+                     method='BFGS',
                      options={'maxiter': 1000})  # Optional: increase max iterations if needed
     print(f"\n{symbol} MLE parameters:", result.x)
     xi, omega, alpha, nu = result.x
@@ -42,20 +41,20 @@ def fit_skewt(returns, symbol):
     skewt_mean = xi + omega * delta * np.sqrt(nu/np.pi) * gamma((nu-1)/2) / gamma(nu/2)
     print(f"{symbol} Skew-T distribution mean: {skewt_mean:.6f}")
 
-    # Plot the data and fitted PDF
+    # Generate X values to plot the PDF
     x = np.linspace(min(returns), max(returns), 1000)
     pdf_fitted = skewt_pdf(x, xi, omega, alpha, nu)
 
     # Generate large sample from fitted skew-t
     N = 1000000
-    # Generate skew-t by the method: Y = (delta*|U| + sqrt(1-delta^2)*V) / sqrt(W/nu)
-    delta = alpha/np.sqrt(1+alpha**2)    # delta = shape in (-1,1)
+    # Generate skew-t using the standard distributions
+    delta = alpha/np.sqrt(1+alpha**2)
     U = np.random.normal(size=N)
     V = np.random.normal(size=N)
     W = np.random.chisquare(nu, size=N)
-    Z_sn = delta*np.abs(U) + np.sqrt(1 - delta**2)*V  # skew-normal(0,1) variate
-    Y = Z_sn / np.sqrt(W/nu)                         # skew-t(0,1,alpha,nu) variate
-    sample = xi + omega * Y                          # skew-t(ξ,ω,α,ν) sample
+    Z_sn = delta*np.abs(U) + np.sqrt(1 - delta**2)*V
+    Y = Z_sn / np.sqrt(W/nu)
+    sample = xi + omega * Y
 
     return x, pdf_fitted, sample, xi, omega, alpha, nu
 
@@ -133,7 +132,7 @@ for symbol in df['symbol'].unique():
     # Add 95% confidence interval
     # ci_lower = mean - 1.96 * std
     # plt.axvline(ci_lower, color='orange', linestyle=':', label=f'95% VaR: [{ci_lower:.4f}]')
-    
+
 
     #  Calculate and add CVaR for normal distribution
     z_95 = norm.ppf(0.05)
@@ -145,16 +144,16 @@ for symbol in df['symbol'].unique():
     plt.plot(x, pdf_fitted, 'b-', lw=2, label='Skew-t Distribution')
 
     # Estimate 95% VaR and CVaR
-    skew_t_var95 = np.percentile(sample, 5)                 # 5th percentile (VaR at 95% conf.)
-    skew_t_cvar95 = sample[sample <= skew_t_var95].mean()          # average of returns beyond VaR
+    skew_t_var95 = np.percentile(sample, 5)
+    skew_t_cvar95 = sample[sample <= skew_t_var95].mean()
     plt.axvline(skew_t_cvar95, color='blue', linestyle='--', label=f'95% Skew-t CVaR: {skew_t_cvar95:.4f}')
 
     x, pdf_fitted, sample, mu, sigma, nu = fit_studentt(symbol_returns, symbol)
     plt.plot(x, pdf_fitted, 'g-', lw=2, label='Student-t Distribution')
 
     # Estimate 95% VaR and CVaR
-    student_t_var95 = np.percentile(sample, 5)                 # 5th percentile (VaR at 95% conf.)
-    student_t_cvar95 = sample[sample <= student_t_var95].mean()          # average of returns beyond VaR
+    student_t_var95 = np.percentile(sample, 5)
+    student_t_cvar95 = sample[sample <= student_t_var95].mean()
     plt.axvline(student_t_cvar95, color='yellow', linestyle='--', label=f'95% Student-t CVaR: {student_t_cvar95:.4f}')
 
     plt.title(f'Daily Returns for {symbol}')
