@@ -93,18 +93,3 @@ ES_standard = -(t_dist.pdf(z, df=nu_hat) * (nu_hat + z**2) /
                 ((nu_hat - 1) * alpha))
 print(f"Constant C: {ES_standard}")
 
-# Given a example of portfolio weights, calculate the 1‑day VaR and CVaR
-w = np.array([0.35, 0.40, 0.25])
-mu_p  = float(w @ mu_hat)
-sigma2_p = float(w @ Sigma_hat @ w)
-scale_p = np.sqrt(sigma2_p)
-
-# VaR
-VaR = t_dist.ppf(alpha, df=nu_hat, loc=mu_p, scale=scale_p)
-
-# CVaR
-CVaR = mu_p + scale_p * ES_standard
-
-print("\n=== 1‑Day Risk Measures (95% confidence) ===")
-print(f"VaR  (5th percentile): {VaR:.4%}")
-print(f"CVaR (Expected Shortfall): {CVaR:.4%}")
