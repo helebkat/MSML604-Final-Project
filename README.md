@@ -66,5 +66,23 @@ Prints the parameters required to calculate the CVaR of a portfolio:
 Given a example of portfolio weights, calculate the 1‑day VaR and CVaR
 - VaR
 - CVaR
+
+### 6. Plot Pareto Frontier
+
+[6-pareto-frontier.py](source/6-pareto-frontier.py)
+
+Solves the multi-objective optimization problem to generate the Pareto frontier for portfolio management. For a range of expected return targets, the script minimizes CVaR and computes the corresponding optimal portfolio weights.
+
+The output is a plot showing the trade-off between expected return and CVaR, also known as the efficient frontier under risk constraints.
+
+- Uses parameters fitted in 4-multivariate-student.py:
+
+- Constant C for CVaR calculation under Student-t distribution
+
+Outputs:
+
+Pareto Frontier graph: Expected Return vs. CVaR
+
+Can be extended to highlight specific portfolio choices on the curve
 ## Next Steps
 
