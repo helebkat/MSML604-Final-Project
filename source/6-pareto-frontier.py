@@ -3,13 +3,17 @@ from scipy.optimize import minimize
 from scipy.stats import t as t_dist
 import matplotlib.pyplot as plt
 
-# parameters from 4-multivariate-student.py file
-mu_hat = np.array([0.00210133, 0.00643774, 0.00095525])
-Sigma_hat = np.array([[1.74239124e-04, 1.52280579e-04, 7.44363741e-05],
-                      [1.52280579e-04, 1.19772779e-03, 1.59879186e-04],
-                      [7.44363741e-05, 1.59879186e-04, 1.12063719e-04]])
-nu_hat = 3.1600
+# Load the MLE parameters from the .npz file
+params = np.load("output/mvt_params.npz")
+
+mu_hat = params["mu"]
+Sigma_hat = params["Sigma"]
+nu_hat = params["nu"].item() 
 alpha = 0.05
+
+print("mu_hat:", mu_hat)
+print("Sigma_hat:\n", Sigma_hat)
+print("nu_hat:", nu_hat)
 
 
 z = t_dist.ppf(alpha, df=nu_hat)

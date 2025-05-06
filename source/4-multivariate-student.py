@@ -93,3 +93,6 @@ ES_standard = -(t_dist.pdf(z, df=nu_hat) * (nu_hat + z**2) /
                 ((nu_hat - 1) * alpha))
 print(f"Constant C: {ES_standard}")
 
+# save the parameters to a file
+np.savez("output/mvt_params.npz", mu=mu_hat, Sigma=Sigma_hat, nu=nu_hat)
+
