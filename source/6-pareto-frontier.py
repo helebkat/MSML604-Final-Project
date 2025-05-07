@@ -15,11 +15,9 @@ print("mu_hat:", mu_hat)
 print("Sigma_hat:\n", Sigma_hat)
 print("nu_hat:", nu_hat)
 
-
 z = t_dist.ppf(alpha, df=nu_hat)
 C_constant = -(t_dist.pdf(z, df=nu_hat) * (nu_hat + z**2) /
-               ((nu_hat - 1) * alpha)) # constant C for CVaR from Student-t
-
+               ((nu_hat - 1) * alpha))  # constant C for CVaR from Student-t
 
 def expected_return(w):
     return np.dot(w, mu_hat)
@@ -32,9 +30,12 @@ def portfolio_cvar(w):
     sigma_p = np.sqrt(portfolio_variance(w))
     return -(mu_p + sigma_p * C_constant)  # negate for minimization
 
-# optimization
+def scalarized_objective(w, lam):
+    return lam * portfolio_cvar(w) - (1 - lam) * expected_return(w)
+
+# Optimization setup
 n_assets = len(mu_hat)
-target_returns = np.linspace(min(mu_hat), max(mu_hat), 50)
+lambdas = np.linspace(0.01, 0.99, 50)
 
 pareto_returns = []
 pareto_cvars = []
@@ -43,22 +44,17 @@ pareto_weights = []
 bounds = [(0, 1)] * n_assets
 constraint_sum_to_1 = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
 
-for r_target in target_returns:
-    constraints = [
-        constraint_sum_to_1,
-        {'type': 'ineq', 'fun': lambda w, r=r_target: expected_return(w) - r}
-    ]
-    
+for lam in lambdas:
     w0 = np.ones(n_assets) / n_assets
-    result = minimize(portfolio_cvar, w0, bounds=bounds, constraints=constraints)
+    result = minimize(scalarized_objective, w0, args=(lam,), bounds=bounds, constraints=[constraint_sum_to_1])
     
     if result.success:
         w_opt = result.x
         pareto_weights.append(w_opt)
         pareto_returns.append(expected_return(w_opt))
-        pareto_cvars.append(-portfolio_cvar(w_opt))  # undo negation for actual value
+        pareto_cvars.append(-portfolio_cvar(w_opt))  # flip sign to show actual CVaR
 
-
+# Plot
 plt.figure(figsize=(10, 6))
 plt.plot(pareto_cvars, pareto_returns, marker='o', label='Pareto Frontier')
 plt.xlabel("CVaR (Expected Shortfall)")
