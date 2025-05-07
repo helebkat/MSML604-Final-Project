@@ -8,7 +8,8 @@ stock_client = StockHistoricalDataClient(
     secret_key="N6pUrWJXqS9asyYlvJ089Inpvs7U8UfufkQftkDt",
 )
 
-tickers = ["AAPL", "MSFT", "HOOD"]
+# tickers = ["AAPL", "MSFT", "HOOD"]
+tickers = ["AAPL", "NVDA", "MSFT", "AMZN", "META", "GOOGL", "AVGO", "TSLA", "BRK.B," "GOOG", "JPM", "LLY", "V", "XOM", "COST", "MA", "UNH", "NFLX", "WMT", "PG"]
 start_date = "2024-04-30"
 end_date = "2025-04-30"
 timeframe = TimeFrame.Day
