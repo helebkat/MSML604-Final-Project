@@ -83,6 +83,5 @@ Outputs:
 
 Pareto Frontier graph: Expected Return vs. CVaR
 
-Can be extended to highlight specific portfolio choices on the curve
 ## Next Steps
 
