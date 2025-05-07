@@ -15,12 +15,10 @@ print("mu_hat:", mu_hat)
 print("Sigma_hat:\n", Sigma_hat)
 print("nu_hat:", nu_hat)
 
-# Compute CVaR constant from Student-t distribution
 z = t_dist.ppf(alpha, df=nu_hat)
 C_constant = -(t_dist.pdf(z, df=nu_hat) * (nu_hat + z**2) /
                ((nu_hat - 1) * alpha))  # constant C for CVaR from Student-t
 
-# Define portfolio functions
 def expected_return(w):
     return np.dot(w, mu_hat)
 
@@ -48,21 +46,23 @@ constraint_sum_to_1 = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
 
 for lam in lambdas:
     w0 = np.ones(n_assets) / n_assets
-    result = minimize(
-        scalarized_objective,
-        w0,
-        args=(lam,),
-        method='trust-constr',
-        bounds=bounds,
-        constraints=[constraint_sum_to_1],
-        options={'verbose': 0} 
-    )
+    result = minimize(scalarized_objective, w0, args=(lam,), bounds=bounds, constraints=[constraint_sum_to_1])
     
     if result.success:
         w_opt = result.x
         pareto_weights.append(w_opt)
         pareto_returns.append(expected_return(w_opt))
         pareto_cvars.append(-portfolio_cvar(w_opt))  # flip sign to show actual CVaR
+    if portfolio_cvar(w_opt) > 0.029 and 0.031 > portfolio_cvar(w_opt):
+        print(f"Optimal weights for lambda={lam}: {w_opt}")
+        print(f"Expected return: {expected_return(w_opt)}")
+        print(f"CVaR: {-portfolio_cvar(w_opt)}")
+    
+
+print("Pareto returns:\n", pareto_returns)
+print("Pareto CVaR:\n", pareto_cvars)
+
+print("Pareto weights:\n", w_opt)
 
 # Plot
 plt.figure(figsize=(10, 6))
@@ -74,3 +74,5 @@ plt.grid(True)
 plt.legend()
 plt.tight_layout()
 plt.show()
+
+
