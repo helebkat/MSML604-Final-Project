@@ -1,4 +1,4 @@
-# MSML604 Final Project
+# Portfolio Risk Minimization
 
 ## Proposal
 
