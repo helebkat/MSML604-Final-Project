@@ -83,5 +83,4 @@ Outputs:
 
 Pareto Frontier graph: Expected Return vs. CVaR
 
-## Next Steps
 
